@@ -60,6 +60,9 @@ SET gamemode TO CustomFormData['Game Category']
 SET downloadMainFolder TO $'''C:\\Users\\user\\osu! Beatmap Packs'''
 SWITCH CustomFormData['Game Category']
     CASE = 1
+        IF (Folder.IfFolderExists.DoesNotExist Path: downloadSubFolder) THEN
+            Folder.Create FolderPath: downloadMainFolder FolderName: $'''osu'''
+        END
         SET downloadSubFolder TO $'''%downloadMainFolder%\\osu'''
         LOOP WHILE (iteration) > (0)
             IF (File.IfFile.Exists File: $'''%downloadSubFolder%\\S%iteration%.zip''') THEN
@@ -96,6 +99,9 @@ SWITCH CustomFormData['Game Category']
             Variables.IncreaseVariable Value: iteration IncrementValue: 1
         END
     CASE = 2
+        IF (Folder.IfFolderExists.DoesNotExist Path: downloadSubFolder) THEN
+            Folder.Create FolderPath: downloadMainFolder FolderName: $'''taiko'''
+        END
         SET downloadSubFolder TO $'''%downloadMainFolder%taiko'''
         LOOP WHILE (iteration) > (0)
             IF (File.IfFile.Exists File: $'''%downloadSubFolder%\\ST%iteration%.zip''') THEN
@@ -132,6 +138,9 @@ SWITCH CustomFormData['Game Category']
             Variables.IncreaseVariable Value: iteration IncrementValue: 1
         END
     CASE = 3
+        IF (Folder.IfFolderExists.DoesNotExist Path: downloadSubFolder) THEN
+            Folder.Create FolderPath: downloadMainFolder FolderName: $'''mania'''
+        END
         SET downloadSubFolder TO $'''%downloadMainFolder%\\mania'''
         LOOP WHILE (iteration) > (0)
             IF (File.IfFile.Exists File: $'''%downloadSubFolder%\\SM%iteration%.zip''') THEN
@@ -168,6 +177,9 @@ SWITCH CustomFormData['Game Category']
             Variables.IncreaseVariable Value: iteration IncrementValue: 1
         END
     CASE = 4
+        IF (Folder.IfFolderExists.DoesNotExist Path: downloadSubFolder) THEN
+            Folder.Create FolderPath: downloadMainFolder FolderName: $'''catch'''
+        END
         SET downloadSubFolder TO $'''%downloadMainFolder%\\catch'''
         LOOP WHILE (iteration) > (0)
             IF (File.IfFile.Exists File: $'''%downloadSubFolder%\\SC%iteration%.zip''') THEN
