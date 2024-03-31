@@ -1,0 +1,207 @@
+@@statistics_statistics_Input_Number: '1'
+@@statistics_statistics_Input_ChoiceSet: '1'
+@@statistics_statistics_Action_Submit: '1'
+Display.ShowCustomDialog CardTemplateJson: '''{
+  \"type\": \"AdaptiveCard\",
+  \"version\": \"1.4\",
+  \"id\": \"AdaptiveCard\",
+  \"body\": [
+    {
+      \"type\": \"Input.Number\",
+      \"id\": \"Starting Beatmap Pack\",
+      \"value\": 1.0,
+      \"min\": 1.0,
+      \"max\": 9999.0,
+      \"isRequired\": true,
+      \"label\": \"${Starting_Beatmap_Pack_Label}\",
+      \"errorMessage\": \"${Starting_Beatmap_Pack_ErrorMessage}\"
+    },
+    {
+      \"type\": \"Input.ChoiceSet\",
+      \"id\": \"Game Category\",
+      \"value\": \"${Game_Category_Value}\",
+      \"style\": \"expanded\",
+      \"isMultiSelect\": false,
+      \"choices\": [
+        {
+          \"title\": \"Osu!\",
+          \"value\": \"1\"
+        },
+        {
+          \"title\": \"Taiko\",
+          \"value\": \"2\"
+        },
+        {
+          \"title\": \"Mania\",
+          \"value\": \"3\"
+        },
+        {
+          \"title\": \"Catch the Beat\",
+          \"value\": \"4\"
+        }
+      ],
+      \"isRequired\": true,
+      \"label\": \"${Game_Category_Label}\",
+      \"errorMessage\": \"${Game_Category_ErrorMessage}\",
+      \"spacing\": \"padding\",
+      \"separator\": true
+    }
+  ],
+  \"actions\": [
+    {
+      \"type\": \"Action.Submit\",
+      \"id\": \"Submit\",
+      \"title\": \"${Submit_Title}\"
+    }
+  ]
+}''' CustomFormData=> CustomFormData @Starting_Beatmap_Pack_Label: $'''Starting Beatmap Pack #''' @Starting_Beatmap_Pack_ErrorMessage: $'''Select a value between 1 and 9999''' @Game_Category_Label: $'''Game Category''' @Game_Category_Value: 1 @Game_Category_ErrorMessage: $'''Please select a game mode''' @Submit_Title: $'''Ok'''
+SET iteration TO CustomFormData['Starting Beatmap Pack']
+SET gamemode TO CustomFormData['Game Category']
+SET downloadMainFolder TO $'''C:\\Users\\user\\osu! Beatmap Packs'''
+SWITCH CustomFormData['Game Category']
+    CASE = 1
+        SET downloadSubFolder TO $'''%downloadMainFolder%\\osu'''
+        LOOP WHILE (iteration) > (0)
+            IF (File.IfFile.Exists File: $'''%downloadSubFolder%\\S%iteration%.zip''') THEN
+            ELSE
+                IF (File.IfFile.Exists File: $'''%downloadSubFolder%\\S%iteration%.7z''') THEN
+                    GOTO 'Osu File Exists'
+                END
+                SET url1 TO $'''%'https://packs.ppy.sh/S'%%iteration%%'%20-%20Beatmap%20Pack%20%23'%%iteration%.7z'''
+                SET url2 TO $'''%'https://packs.ppy.sh/S'%%iteration%%'%20-%20Beatmap%20Pack%20%23'%%iteration%.zip'''
+                SET url3 TO $'''%'https://packs.ppy.sh/S'%%iteration%%'%20-%20osu%21%20Beatmap%20Pack%20%23'%%iteration%.zip'''
+                Web.InvokeWebService.InvokeWebService Url: url1 Method: Web.Method.Head Accept: $'''application/xml''' ContentType: $'''application/xml''' ConnectionTimeout: 30 FollowRedirection: True ClearCookies: True FailOnErrorStatus: False EncodeRequestBody: True UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False StatusCode=> statusCode1
+                ON ERROR REPEAT 15 TIMES WAIT 2
+                END
+                Web.InvokeWebService.InvokeWebService Url: url2 Method: Web.Method.Head Accept: $'''application/xml''' ContentType: $'''application/xml''' ConnectionTimeout: 30 FollowRedirection: True ClearCookies: True FailOnErrorStatus: False EncodeRequestBody: True UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False StatusCode=> statusCode2
+                ON ERROR REPEAT 15 TIMES WAIT 2
+                END
+                Web.InvokeWebService.InvokeWebService Url: url3 Method: Web.Method.Head Accept: $'''application/xml''' ContentType: $'''application/xml''' ConnectionTimeout: 30 FollowRedirection: True ClearCookies: True FailOnErrorStatus: False EncodeRequestBody: True UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False StatusCode=> statusCode3
+                ON ERROR REPEAT 15 TIMES WAIT 2
+                END
+                SWITCH 200
+                    CASE = statusCode1
+                        Web.DownloadFromWeb.DownloadToFolder Url: url1 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
+                    CASE = statusCode2
+                        Web.DownloadFromWeb.DownloadToFolder Url: url2 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
+                    CASE = statusCode3
+                        Web.DownloadFromWeb.DownloadToFolder Url: url3 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
+                    DEFAULT
+                        Display.ShowMessageDialog.ShowMessageWithTimeout Title: $'''Osu Beatmap Pack Collector''' Message: $'''Flow stopped. Last beatmap pack downloaded is #%iteration - 1%.''' Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: True Timeout: 3
+                        EXIT Code: 0
+                END
+                File.RenameFiles.Rename Files: downloadedFile NewName: $'''S%iteration%''' KeepExtension: True IfFileExists: File.IfExists.DoNothing
+            END
+            LABEL 'Osu File Exists'
+            Variables.IncreaseVariable Value: iteration IncrementValue: 1
+        END
+    CASE = 2
+        SET downloadSubFolder TO $'''%downloadMainFolder%taiko'''
+        LOOP WHILE (iteration) > (0)
+            IF (File.IfFile.Exists File: $'''%downloadSubFolder%\\ST%iteration%.zip''') THEN
+            ELSE
+                IF (File.IfFile.Exists File: $'''%downloadSubFolder%\\ST%iteration%.7z''') THEN
+                    GOTO 'Taiko File Exists'
+                END
+                SET url1 TO $'''%'https://packs.ppy.sh/ST'%%iteration%%'%20-%20Taiko%20Beatmap%20Pack%20%23'%%iteration%.7z'''
+                SET url2 TO $'''%'https://packs.ppy.sh/ST'%%iteration%%'%20-%20Taiko%20Beatmap%20Pack%20%23'%%iteration%.zip'''
+                SET url3 TO $'''%'https://packs.ppy.sh/ST'%%iteration%%'%20-%20osu%21taiko%20Beatmap%20Pack%20%23'%%iteration%.zip'''
+                Web.InvokeWebService.InvokeWebService Url: url1 Method: Web.Method.Head Accept: $'''application/xml''' ContentType: $'''application/xml''' ConnectionTimeout: 30 FollowRedirection: True ClearCookies: True FailOnErrorStatus: False EncodeRequestBody: True UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False StatusCode=> statusCode1
+                ON ERROR REPEAT 15 TIMES WAIT 2
+                END
+                Web.InvokeWebService.InvokeWebService Url: url2 Method: Web.Method.Head Accept: $'''application/xml''' ContentType: $'''application/xml''' ConnectionTimeout: 30 FollowRedirection: True ClearCookies: True FailOnErrorStatus: False EncodeRequestBody: True UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False StatusCode=> statusCode2
+                ON ERROR REPEAT 15 TIMES WAIT 2
+                END
+                Web.InvokeWebService.InvokeWebService Url: url3 Method: Web.Method.Head Accept: $'''application/xml''' ContentType: $'''application/xml''' ConnectionTimeout: 30 FollowRedirection: True ClearCookies: True FailOnErrorStatus: False EncodeRequestBody: True UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False StatusCode=> statusCode3
+                ON ERROR REPEAT 15 TIMES WAIT 2
+                END
+                SWITCH 200
+                    CASE = statusCode1
+                        Web.DownloadFromWeb.DownloadToFolder Url: url1 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
+                    CASE = statusCode2
+                        Web.DownloadFromWeb.DownloadToFolder Url: url2 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
+                    CASE = statusCode3
+                        Web.DownloadFromWeb.DownloadToFolder Url: url3 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
+                    DEFAULT
+                        Display.ShowMessageDialog.ShowMessageWithTimeout Title: $'''Osu Beatmap Pack Collector''' Message: $'''Flow stopped. Last beatmap pack downloaded is #%iteration - 1%.''' Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: True Timeout: 3
+                        EXIT Code: 0
+                END
+                File.RenameFiles.Rename Files: downloadedFile NewName: $'''ST%iteration%''' KeepExtension: True IfFileExists: File.IfExists.DoNothing
+            END
+            LABEL 'Taiko File Exists'
+            Variables.IncreaseVariable Value: iteration IncrementValue: 1
+        END
+    CASE = 3
+        SET downloadSubFolder TO $'''%downloadMainFolder%\\mania'''
+        LOOP WHILE (iteration) > (0)
+            IF (File.IfFile.Exists File: $'''%downloadSubFolder%\\SM%iteration%.zip''') THEN
+            ELSE
+                IF (File.IfFile.Exists File: $'''%downloadSubFolder%\\SM%iteration%.7z''') THEN
+                    GOTO 'Mania File Exists'
+                END
+                SET url1 TO $'''%'https://packs.ppy.sh/SM'%%iteration%%'%20-%20Mania%20Beatmap%20Pack%20%23'%%iteration%.7z'''
+                SET url2 TO $'''%'https://packs.ppy.sh/SM'%%iteration%%'%20-%20Mania%20Beatmap%20Pack%20%23'%%iteration%.zip'''
+                SET url3 TO $'''%'https://packs.ppy.sh/SM'%%iteration%%'%20-%20osu%21mania%20Beatmap%20Pack%20%23'%%iteration%.zip'''
+                Web.InvokeWebService.InvokeWebService Url: url1 Method: Web.Method.Head Accept: $'''application/xml''' ContentType: $'''application/xml''' ConnectionTimeout: 30 FollowRedirection: True ClearCookies: True FailOnErrorStatus: False EncodeRequestBody: True UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False StatusCode=> statusCode1
+                ON ERROR REPEAT 15 TIMES WAIT 2
+                END
+                Web.InvokeWebService.InvokeWebService Url: url2 Method: Web.Method.Head Accept: $'''application/xml''' ContentType: $'''application/xml''' ConnectionTimeout: 30 FollowRedirection: True ClearCookies: True FailOnErrorStatus: False EncodeRequestBody: True UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False StatusCode=> statusCode2
+                ON ERROR REPEAT 15 TIMES WAIT 2
+                END
+                Web.InvokeWebService.InvokeWebService Url: url3 Method: Web.Method.Head Accept: $'''application/xml''' ContentType: $'''application/xml''' ConnectionTimeout: 30 FollowRedirection: True ClearCookies: True FailOnErrorStatus: False EncodeRequestBody: True UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False StatusCode=> statusCode3
+                ON ERROR REPEAT 15 TIMES WAIT 2
+                END
+                SWITCH 200
+                    CASE = statusCode1
+                        Web.DownloadFromWeb.DownloadToFolder Url: url1 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
+                    CASE = statusCode2
+                        Web.DownloadFromWeb.DownloadToFolder Url: url2 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
+                    CASE = statusCode3
+                        Web.DownloadFromWeb.DownloadToFolder Url: url3 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
+                    DEFAULT
+                        Display.ShowMessageDialog.ShowMessageWithTimeout Title: $'''Osu Beatmap Pack Collector''' Message: $'''Flow stopped. Last beatmap pack downloaded is #%iteration - 1%.''' Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: True Timeout: 3
+                        EXIT Code: 0
+                END
+                File.RenameFiles.Rename Files: downloadedFile NewName: $'''SM%iteration%''' KeepExtension: True IfFileExists: File.IfExists.DoNothing
+            END
+            LABEL 'Mania File Exists'
+            Variables.IncreaseVariable Value: iteration IncrementValue: 1
+        END
+    CASE = 4
+        SET downloadSubFolder TO $'''%downloadMainFolder%\\catch'''
+        LOOP WHILE (iteration) > (0)
+            IF (File.IfFile.Exists File: $'''%downloadSubFolder%\\SC%iteration%.zip''') THEN
+            ELSE
+                IF (File.IfFile.Exists File: $'''%downloadSubFolder%\\SC%iteration%.7z''') THEN
+                    GOTO 'Catch File Exists'
+                END
+                SET url1 TO $'''%'https://packs.ppy.sh/SC'%%iteration%%'%20-%20Catch%20the%20Beat%20Beatmap%20Pack%20%23'%%iteration%.7z'''
+                SET url2 TO $'''%'https://packs.ppy.sh/SC'%%iteration%%'%20-%20Catch%20the%20Beat%20Beatmap%20Pack%20%23'%%iteration%.zip'''
+                SET url3 TO $'''%'https://packs.ppy.sh/SC'%%iteration%%'%20-%20osu%21catch%20Beatmap%20Pack%20%23'%%iteration%.zip'''
+                Web.InvokeWebService.InvokeWebService Url: url1 Method: Web.Method.Head Accept: $'''application/xml''' ContentType: $'''application/xml''' ConnectionTimeout: 30 FollowRedirection: True ClearCookies: True FailOnErrorStatus: False EncodeRequestBody: True UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False StatusCode=> statusCode1
+                ON ERROR REPEAT 15 TIMES WAIT 2
+                END
+                Web.InvokeWebService.InvokeWebService Url: url2 Method: Web.Method.Head Accept: $'''application/xml''' ContentType: $'''application/xml''' ConnectionTimeout: 30 FollowRedirection: True ClearCookies: True FailOnErrorStatus: False EncodeRequestBody: True UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False StatusCode=> statusCode2
+                ON ERROR REPEAT 15 TIMES WAIT 2
+                END
+                Web.InvokeWebService.InvokeWebService Url: url3 Method: Web.Method.Head Accept: $'''application/xml''' ContentType: $'''application/xml''' ConnectionTimeout: 30 FollowRedirection: True ClearCookies: True FailOnErrorStatus: False EncodeRequestBody: True UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False StatusCode=> statusCode3
+                ON ERROR REPEAT 15 TIMES WAIT 2
+                END
+                SWITCH 200
+                    CASE = statusCode1
+                        Web.DownloadFromWeb.DownloadToFolder Url: url1 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
+                    CASE = statusCode2
+                        Web.DownloadFromWeb.DownloadToFolder Url: url2 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
+                    CASE = statusCode3
+                        Web.DownloadFromWeb.DownloadToFolder Url: url3 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
+                    DEFAULT
+                        Display.ShowMessageDialog.ShowMessageWithTimeout Title: $'''Osu Beatmap Pack Collector''' Message: $'''Flow stopped. Last beatmap pack downloaded is #%iteration - 1%.''' Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: True Timeout: 3
+                        EXIT Code: 0
+                END
+                File.RenameFiles.Rename Files: downloadedFile NewName: $'''SC%iteration%''' KeepExtension: True IfFileExists: File.IfExists.DoNothing
+            END
+            LABEL 'Catch File Exists'
+            Variables.IncreaseVariable Value: iteration IncrementValue: 1
+        END
+    DEFAULT
+END
