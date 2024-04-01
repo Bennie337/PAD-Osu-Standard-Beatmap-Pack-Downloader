@@ -58,7 +58,7 @@ Display.ShowCustomDialog CardTemplateJson: '''{
 SET iteration TO CustomFormData['Starting Beatmap Pack']
 SET gamemode TO CustomFormData['Category']
 SET downloadMainFolder TO $'''C:\\Users\\user\\osu! Beatmap Packs'''
-SWITCH CustomFormData['Game Category']
+SWITCH CustomFormData['Category']
     CASE = 1
         IF (Folder.IfFolderExists.DoesNotExist Path: downloadSubFolder) THEN
             Folder.Create FolderPath: downloadMainFolder FolderName: $'''osu'''
@@ -90,7 +90,7 @@ SWITCH CustomFormData['Game Category']
                     CASE = statusCode3
                         Web.DownloadFromWeb.DownloadToFolder Url: url3 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
                     DEFAULT
-                        Display.ShowMessageDialog.ShowMessageWithTimeout Title: $'''Osu Beatmap Pack Collector''' Message: $'''Flow stopped. Last beatmap pack downloaded is #%iteration - 1%.''' Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: True Timeout: 3
+                        Display.ShowMessageDialog.ShowMessageWithTimeout Title: $'''Osu Beatmap Pack Collector''' Message: $'''Flow stopped. Last beatmap pack downloaded is #%iteration - 1%.''' Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: False Timeout: 3
                         EXIT Code: 0
                 END
                 File.RenameFiles.Rename Files: downloadedFile NewName: $'''S%iteration%''' KeepExtension: True IfFileExists: File.IfExists.DoNothing
@@ -129,7 +129,7 @@ SWITCH CustomFormData['Game Category']
                     CASE = statusCode3
                         Web.DownloadFromWeb.DownloadToFolder Url: url3 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
                     DEFAULT
-                        Display.ShowMessageDialog.ShowMessageWithTimeout Title: $'''Osu Beatmap Pack Collector''' Message: $'''Flow stopped. Last beatmap pack downloaded is #%iteration - 1%.''' Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: True Timeout: 3
+                        Display.ShowMessageDialog.ShowMessageWithTimeout Title: $'''Osu Beatmap Pack Collector''' Message: $'''Flow stopped. Last beatmap pack downloaded is #%iteration - 1%.''' Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: False Timeout: 3
                         EXIT Code: 0
                 END
                 File.RenameFiles.Rename Files: downloadedFile NewName: $'''ST%iteration%''' KeepExtension: True IfFileExists: File.IfExists.DoNothing
@@ -168,7 +168,7 @@ SWITCH CustomFormData['Game Category']
                     CASE = statusCode3
                         Web.DownloadFromWeb.DownloadToFolder Url: url3 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
                     DEFAULT
-                        Display.ShowMessageDialog.ShowMessageWithTimeout Title: $'''Osu Beatmap Pack Collector''' Message: $'''Flow stopped. Last beatmap pack downloaded is #%iteration - 1%.''' Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: True Timeout: 3
+                        Display.ShowMessageDialog.ShowMessageWithTimeout Title: $'''Osu Beatmap Pack Collector''' Message: $'''Flow stopped. Last beatmap pack downloaded is #%iteration - 1%.''' Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: False Timeout: 3
                         EXIT Code: 0
                 END
                 File.RenameFiles.Rename Files: downloadedFile NewName: $'''SM%iteration%''' KeepExtension: True IfFileExists: File.IfExists.DoNothing
@@ -207,7 +207,7 @@ SWITCH CustomFormData['Game Category']
                     CASE = statusCode3
                         Web.DownloadFromWeb.DownloadToFolder Url: url3 DestinationFolder: downloadSubFolder ConnectionTimeout: 30 FollowRedirection: True ClearCookies: False UserAgent: $'''Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.21) Gecko/20100312 Firefox/3.6''' Encoding: Web.Encoding.AutoDetect AcceptUntrustedCertificates: False DownloadedFile=> downloadedFile
                     DEFAULT
-                        Display.ShowMessageDialog.ShowMessageWithTimeout Title: $'''Osu Beatmap Pack Collector''' Message: $'''Flow stopped. Last beatmap pack downloaded is #%iteration - 1%.''' Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: True Timeout: 3
+                        Display.ShowMessageDialog.ShowMessageWithTimeout Title: $'''Osu Beatmap Pack Collector''' Message: $'''Flow stopped. Last beatmap pack downloaded is #%iteration - 1%.''' Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: False Timeout: 3
                         EXIT Code: 0
                 END
                 File.RenameFiles.Rename Files: downloadedFile NewName: $'''SC%iteration%''' KeepExtension: True IfFileExists: File.IfExists.DoNothing
